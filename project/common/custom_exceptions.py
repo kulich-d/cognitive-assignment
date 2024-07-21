@@ -11,6 +11,7 @@ class LLMException(Exception):
            message (str): The error message to be associated with the exception.
         """
         super().__init__(message)
+        self.message = message
 
     def __str__(self):
         """Returns the string representation of the exception.

@@ -62,7 +62,8 @@ def run_process(image_path: str, prompt: BasePrompt, chat_template: ChatPromptTe
 
     try:
         result = with_message_history.invoke(
-            {"task_instruction": prompt.input_overview + "\n" + prompt.task,
+            {"prompt_role": prompt.role,
+             "task_instruction": prompt.input_overview + "\n" + prompt.task,
              "response_template": output_parser.get_format_instructions(),
              "image": base64_image},
             config=session_config)
@@ -91,12 +92,11 @@ def pipeline(process_prompts: dict, image_path: str, heatmap_image_path: str) ->
     session_config = {"configurable": {"session_id": "procA"}}
 
     app_config.process_logger.info("Start process A")
-    role_instruction = process_prompts["role"]
     a1_prompt = BasePrompt(**process_prompts["a1_instructions"])
     a2_prompt = BasePrompt(**process_prompts["a2_instructions"])
 
-    chat_template = ChatPromptTemplate.from_messages([
-        ("system", role_instruction),
+    chat_template = ChatPromptTemplate.from_messages([ # tdo change prompt потому что оно скорее на свои штуки отвлекается чем на картинку, показать эксперимент со второй картинкой
+        ("system", "{prompt_role}"),
         ("system", "{task_instruction}"),
         ("system", "{response_template}"),
         MessagesPlaceholder(variable_name="history"),

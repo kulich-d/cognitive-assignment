@@ -1,8 +1,6 @@
-#todo убираю строки в response formate потому что нужно либо говорить что придет пачка картинок, и для каждой надо вот так и джейсон хотя бы в двумя примерами подавать, либо это будут асинк вызовы
-
 a_process:
-  role: "You are a Senior Insights Manager with decades of experience, and a background in marketing." # move role to each of a_instructions
   a1_instructions:
+    role: "You are a Senior Insights Manager with decades of experience, and a background in marketing."
     input_overview: "You are provided with an image of a digital advertisement. You have two tasks:"
     task: "1) Provide a detailed description of the advert. In other words, identify and describe the key elements such as the product being advertised, the brand name, and the call-to-action (CTA), where available.
            2) Additionally, assess and determine the primary purpose of the advertisement, i.e. whether it is aimed at brand building or aimed at driving conversion."
@@ -13,6 +11,7 @@ a_process:
         description: "can only be either \"brand-building\" or \"conversion\""
 
   a2_instructions:
+    role: "You are a Senior Insights Manager with decades of experience, and a background in marketing."
     input_overview: "You are now provided with the attention heatmap of the same image. The attention heatmap illustrates the distribution of attention as predicted by an AI model that was trained on eye-tracking data. Red colour indicates high attention, green implies moderate level and transparent colours mean low attention. Please do not confuse the heatmap colours, i.e. the red, yellow, green blobs etc. with the actual colours of the video frames"
     task: "You have a single task:
     Based on the provided heatmap, identify the most visually salient elements, i.e. the elements that catch the most attention. Please pay special attention to the product being advertised, the brand or logo, and call-to-action (CTA), where available.  Provide the output in the following JSON format {json_format}"
