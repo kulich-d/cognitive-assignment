@@ -1,7 +1,9 @@
+import os
+
+import yaml
+from common import logger
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-
-from common import logger
 
 
 class AppConfig:
@@ -12,7 +14,7 @@ class AppConfig:
     """
     _instance = None
 
-    def __new__(cls, env_path="./envs/.env", logger_save_path=".", *args, **kwargs):
+    def __new__(cls, env_path="./envs/.env", logger_save_path=".", prompts_config_path="", *args, **kwargs):
         """Create or return the singleton instance of AppConfig.
 
         Args:
@@ -26,30 +28,28 @@ class AppConfig:
         """
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
-            cls._instance.__initialize(env_path, logger_save_path)
+            cls._instance.__initialize(env_path, logger_save_path, prompts_config_path)
         return cls._instance
 
-    def __initialize(self, env_path: str, logger_save_path: str):
+    def __initialize(self, env_path: str, logger_save_path: str, prompts_config_path: str):
         """Initialize the configuration by loading environment variables and setting up the model.
 
         Args:
             env_path (str): Path to the .env file to load environment variables from.
             logger_save_path (str): Path to the logger file. Defaults is main.py folder.
+            prompt_config_path (str): Path to .yaml prompts config
 
         Raises:
             FileNotFoundError: If the specified .env file is not found.
             Exception: For any errors that occur during model initialization.
         """
-        self.process_logger = logger.get_logger(logger_save_path, 'Logger for process')
+        self.port = int(os.getenv("PORT", 8000))
 
-        try:
-            load_dotenv(env_path)
-        except FileNotFoundError as e:
-            self.process_logger.error(f".env file not found at {env_path}: {e}")
-            raise
-        except Exception as e:
-            self.process_logger.error(f"Error loading .env file: {e}")
-            raise
+        with open(prompts_config_path) as file:
+            self.prompts_config = yaml.safe_load(file)
+
+        self.process_logger = logger.get_logger(logger_save_path, 'Logger for process')
+        load_dotenv(env_path)
 
         try:
             self.model = ChatOpenAI(model="gpt-4o-mini")

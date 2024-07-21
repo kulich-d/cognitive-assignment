@@ -16,7 +16,6 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 # In-memory store for session histories
 store = {}
 
-
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     """Retrieves the chat message history for a given session.
 
@@ -37,11 +36,11 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
     return store[session_id]
 
 
-def run_process(image_path: str, prompt: BasePrompt, chat_template: ChatPromptTemplate, session_config: dict) -> dict:
+def run_process(image: bytes, prompt: BasePrompt, chat_template: ChatPromptTemplate, session_config: dict) -> dict:
     """Runs the image processing pipeline with the given prompt and configuration.
 
     Args:
-        image_path (str): Path to the image file to be processed.
+        image_path (bytes): Image file to be processed.
         prompt (BasePrompt): The prompt containing instructions for the LLM.
         chat_template (ChatPromptTemplate): Template for creating the chat prompt.
         session_config (dict): Configuration dictionary for the session.
@@ -58,7 +57,7 @@ def run_process(image_path: str, prompt: BasePrompt, chat_template: ChatPromptTe
     with_message_history = RunnableWithMessageHistory(chain, get_session_history, input_messages_key="image",
                                                       history_messages_key="history")
 
-    base64_image = utils.encode_image(image_path)
+    base64_image = utils.encode_image(image)
 
     try:
         result = with_message_history.invoke(
@@ -74,13 +73,13 @@ def run_process(image_path: str, prompt: BasePrompt, chat_template: ChatPromptTe
     return result
 
 
-def pipeline(process_prompts: dict, image_path: str, heatmap_image_path: str) -> dict:
+def pipeline(process_prompts: dict, advert_image: bytes, advert_heatmap_image: bytes) -> dict:
     """Executes the processing pipeline with the provided prompts and image paths.
 
     Args:
         process_prompts (dict): Dictionary containing prompts and instructions for the processing stages.
-        image_path (str): Path to the image file for the first processing stage.
-        heatmap_image_path (str): Path to the image file for the second processing stage.
+        advert_image (bytes): Image file for the first processing stage.
+        advert_heatmap_image (bytes): Image file for the second processing stage.
 
     Returns:
         dict: The combined result of both processing stages.
@@ -95,7 +94,8 @@ def pipeline(process_prompts: dict, image_path: str, heatmap_image_path: str) ->
     a1_prompt = BasePrompt(**process_prompts["a1_instructions"])
     a2_prompt = BasePrompt(**process_prompts["a2_instructions"])
 
-    chat_template = ChatPromptTemplate.from_messages([ # tdo change prompt потому что оно скорее на свои штуки отвлекается чем на картинку, показать эксперимент со второй картинкой
+    chat_template = ChatPromptTemplate.from_messages([
+        # tdo change prompt потому что оно скорее на свои штуки отвлекается чем на картинку, показать эксперимент со второй картинкой
         ("system", "{prompt_role}"),
         ("system", "{task_instruction}"),
         ("system", "{response_template}"),
@@ -112,11 +112,12 @@ def pipeline(process_prompts: dict, image_path: str, heatmap_image_path: str) ->
     ])
 
     app_config.process_logger.info("Start process A1")
-    a1 = run_process(image_path, a1_prompt, chat_template, session_config)
+    a1 = run_process(advert_image, a1_prompt, chat_template, session_config)
 
     app_config.process_logger.info("Start process A2")
-    a2 = run_process(heatmap_image_path, a2_prompt, chat_template, session_config)
+    a2 = run_process(advert_heatmap_image, a2_prompt, chat_template, session_config)
 
     result = a1 | a2
     app_config.process_logger.info(result)
+    store.clear()
     return result

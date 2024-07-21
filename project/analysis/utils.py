@@ -1,5 +1,6 @@
 """This module provides utility functions for image processing, including resizing and encoding images."""
 import base64
+from typing_extensions import BinaryIO
 
 
 def resize_image(image_path: str, output_path: str, scale_factor: int):
@@ -20,15 +21,13 @@ def resize_image(image_path: str, output_path: str, scale_factor: int):
     img.save(output_path)
 
 
-def encode_image(image_path: str):
+def encode_image(image: bytes) -> str:
     """Encodes an image file to a base64-encoded string.
 
     Args:
-        image_path (str): The path to the image file that needs to be encoded.
+        image_path (bytes): Image file that needs to be encoded.
 
     Returns:
         str: The base64-encoded string of the image file.
     """
-    # resize_image(image_path, image_path, 5)
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+    return base64.b64encode(image).decode('utf-8');

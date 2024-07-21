@@ -20,7 +20,7 @@ a_process:
         description: "description of the visually salient elements in the advertisement."
 
 b_process:
-  helper_doc_path: "/Users/diana.kulich/Documents/Personal/ML_Engineer_assignment/Cognitive Load Theory.pdf"
+  helper_doc_path: "https://www.mcw.edu/-/media/MCW/Education/Academic-Affairs/OEI/Faculty-Quick-Guides/Cognitive-Load-Theory.pdf"
   b_instructions:
     role: "You are an expert in applied neuroscience and behavioural psychology."
     input_overview: "You are provided with an image of a digital advertisement."
@@ -45,7 +45,3 @@ Summarise the text provided from the two different outputs and ensure that the J
         description: "description of the visually salient elements in the advertisement."
       - name: "cognitive_description"
         description: "assessment of the cognitive load induced by the advertisement in viewers."
-
-
-
-

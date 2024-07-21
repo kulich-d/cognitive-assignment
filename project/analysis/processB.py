@@ -29,7 +29,7 @@ def get_help_info(process_prompts: dict) -> str:
     return help_info
 
 
-def pipeline(process_prompts: dict, image_path: str) -> dict:
+def pipeline(process_prompts: dict, advert_image: bytes) -> dict:
     """Executes the processing pipeline using the provided prompts and image path.
 
     It retrieves help information from a PDF, constructs a chat prompt template,
@@ -38,7 +38,7 @@ def pipeline(process_prompts: dict, image_path: str) -> dict:
     Args:
         process_prompts (dict): A dictionary containing configuration information,
                                 including prompts and instructions for processing.
-        image_path (str): Path to the image file to be processed.
+        advert_image (bytes): Image file to be processed.
 
     Returns:
         dict: The result of the image processing, parsed into a structured format.
@@ -70,7 +70,7 @@ def pipeline(process_prompts: dict, image_path: str) -> dict:
     output_parser = StructuredOutputParser.from_response_schemas(prompt.response_template)
     chain = chat_template | app_config.model | output_parser
 
-    base64_image = utils.encode_image(image_path)
+    base64_image = utils.encode_image(advert_image)
 
     try:
         result = chain.invoke(
