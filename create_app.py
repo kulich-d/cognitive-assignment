@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-
+from PIL import Image
 import io
 
 
@@ -14,27 +14,47 @@ def send_images_to_api(image1, image2):
     response = requests.post(url, files=files)
     return response.json()
 
+def resize_image(image, scale_factor):
+    image = Image.open(image)
+    width, height = image.size
+    new_width = width // scale_factor
+    new_height = height // scale_factor
+    resized_image = image.resize((new_width, new_height), Image.LANCZOS)
+    resized_image.save("here.png")
+    return resized_image
 
-# Заголовок приложения
+
 st.title("Image Uploader to API")
 
-# Загрузка первой картинки
 uploaded_file1 = st.file_uploader("Upload first image", type=["jpg", "jpeg", "png"])
-# Загрузка второй картинки
 uploaded_file2 = st.file_uploader("Upload second image", type=["jpg", "jpeg", "png"])
 
+
+
 if uploaded_file1 and uploaded_file2:
-    # Отображение загруженных изображений
     st.image(uploaded_file1, caption='First Image', use_column_width=True)
     st.image(uploaded_file2, caption='Second Image', use_column_width=True)
 
-    # Преобразование загруженных файлов в формат, пригодный для отправки через API
     image1 = uploaded_file1.read()
     image2 = uploaded_file2.read()
 
-    # Кнопка для отправки изображений на API
+    resized_image1 = resize_image(io.BytesIO(image1), 4)
+    resized_image2 = resize_image(io.BytesIO(image2), 4)
+
+
+    buffered1 = io.BytesIO()
+    resized_image1.save(buffered1, format="PNG")
+    buffered1.seek(0)
+    print(len(buffered1.getvalue()))
+
+    buffered2 = io.BytesIO()
+    resized_image2.save(buffered2, format="PNG")
+    buffered2.seek(0)
+
     if st.button("Send to API"):
         with st.spinner("Sending images to API..."):
-            result = send_images_to_api(io.BytesIO(image1), io.BytesIO(image2))
+
+
+            result = send_images_to_api(buffered1, buffered2)
             st.success("Images sent successfully!")
             st.json(result)
