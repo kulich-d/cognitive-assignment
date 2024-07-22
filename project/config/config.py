@@ -44,6 +44,7 @@ class AppConfig:
             Exception: For any errors that occur during model initialization.
         """
         self.port = int(os.getenv("PORT", 8000))
+        self.max_size = 30000  # max image size in bytes; used to ensure the image size does not exceed the context window limit of the model
 
         with open(prompts_config_path) as file:
             self.prompts_config = yaml.safe_load(file)
