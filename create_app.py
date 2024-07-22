@@ -16,11 +16,11 @@ def send_images_to_api(image1, image2):
 
 def resize_image(image, scale_factor):
     image = Image.open(image)
+    image = image.convert("RGB") # to reduce buf length
     width, height = image.size
     new_width = width // scale_factor
     new_height = height // scale_factor
     resized_image = image.resize((new_width, new_height), Image.LANCZOS)
-    resized_image.save("here.png")
     return resized_image
 
 
@@ -43,12 +43,13 @@ if uploaded_file1 and uploaded_file2:
 
 
     buffered1 = io.BytesIO()
-    resized_image1.save(buffered1, format="PNG")
+    resized_image1.save(buffered1, format="JPEG")
     buffered1.seek(0)
 
     buffered2 = io.BytesIO()
-    resized_image2.save(buffered2, format="PNG")
+    resized_image2.save(buffered2, format="JPEG")
     buffered2.seek(0)
+
 
     if st.button("Send to API"):
         with st.spinner("Sending images to API..."):
