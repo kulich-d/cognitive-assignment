@@ -45,7 +45,6 @@ if uploaded_file1 and uploaded_file2:
     buffered1 = io.BytesIO()
     resized_image1.save(buffered1, format="PNG")
     buffered1.seek(0)
-    print(len(buffered1.getvalue()))
 
     buffered2 = io.BytesIO()
     resized_image2.save(buffered2, format="PNG")
