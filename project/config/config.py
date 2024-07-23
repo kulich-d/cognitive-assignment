@@ -53,7 +53,8 @@ class AppConfig:
         load_dotenv(env_path)
 
         try:
-            self.model = ChatOpenAI(model="gpt-4o-mini")
+            # self.model = ChatOpenAI(model="gpt-4o-mini")
+            self.model = ChatOpenAI(model="gpt-4o")
         except Exception as e:
             self.process_logger.error(f"Error initializing ChatOpenAI model: {e}")
             raise
