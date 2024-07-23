@@ -112,5 +112,7 @@ You can configure the application by changing the default parameters in `project
 
 You can also configure prompts used in the application using configuration files located in the `project/analysis/prompts` directory.
 
+# Prompt experiment link
+[Here](https://www.notion.so/Prompt-Experiments-caa64efd544b4fad86e7f74d616daeb1?pvs=4) you can find my notion with experiments 
 
 
